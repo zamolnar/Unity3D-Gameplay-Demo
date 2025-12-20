@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using TMPro.EditorUtilities;
+using Unity.Mathematics;
 using UnityEditor.U2D;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,24 +9,37 @@ using UnityEngine.InputSystem;
 
 public class Player_Movemet : MonoBehaviour
 {
-    
+    #region Variables: Movement
+
     private CharacterController _PlayerController;
     [SerializeField] private float Speed;
     private Vector2 _Input;
     private Vector3 _Movement;
 
-    [SerializeField] private float TimeSmooth = 0.05f;
-    private float _CurrentVel;
-    
+    #endregion
+    #region Variables: Rotation
+
+    [SerializeField] private float RotationSpeed = 500f;
+    private Camera _MainCamera;
+
+    #endregion
+    #region Variables: Gravity
+
     private float _Gravity = -9.81f;
     [SerializeField] private float GravityMultiplier = 1.0f;
     private float _Velocity;
 
+    #endregion
+    #region Variables: Jump
+
     [SerializeField] private float JumpPower;
+
+    #endregion
 
     private void Awake()
     {
         _PlayerController = GetComponent<CharacterController>();
+        _MainCamera = Camera.main;
     }
 
     public void Move(InputAction.CallbackContext context)
@@ -48,9 +62,10 @@ public class Player_Movemet : MonoBehaviour
     {
         if (_Input.sqrMagnitude == 0) return;
 
-        var _TargetAngle = Mathf.Atan2(_Movement.x, _Movement.z) * Mathf.Rad2Deg;
-        var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, _TargetAngle, ref _CurrentVel, TimeSmooth);
-        transform.rotation = Quaternion.Euler(0.0f, angle, 0.0f);
+        _Movement = Quaternion.Euler(0.0f, _MainCamera.transform.eulerAngles.y, 0.0f) * new Vector3(_Input.x, 0.0f, _Input.y);
+        var targetrotation = Quaternion.LookRotation(_Movement, Vector3.up);
+
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetrotation, RotationSpeed * Time.deltaTime);
     }
     private void PlayerGravity()
     {
@@ -71,8 +86,8 @@ public class Player_Movemet : MonoBehaviour
     void Update()
     {
 
-        PlayerGravity();
         PlayerRotation();
+        PlayerGravity();
         PlayerMovement();
         
     }
