@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using UnityEditor.U2D;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(CharacterController))]
 
@@ -12,9 +13,9 @@ public class Player_Movemet : MonoBehaviour
     #region Variables: Movement
 
     private CharacterController _PlayerController;
-    [SerializeField] private float Speed;
-    private Vector2 _Input;
-    private Vector3 _Movement;
+    [SerializeField] private float PLayerSpeed;
+    private Vector2 _WASDInput;
+    private Vector3 _PlayerDirection;
 
     #endregion
     #region Variables: Rotation
@@ -27,7 +28,7 @@ public class Player_Movemet : MonoBehaviour
 
     private float _Gravity = -9.81f;
     [SerializeField] private float GravityMultiplier = 1.0f;
-    private float _Velocity;
+    private float _GravityVelocity;
 
     #endregion
     #region Variables: Jump
@@ -38,47 +39,57 @@ public class Player_Movemet : MonoBehaviour
 
     private void Awake()
     {
+        //Set values for camera and player
         _PlayerController = GetComponent<CharacterController>();
         _MainCamera = Camera.main;
     }
 
     public void Move(InputAction.CallbackContext context)
     {
-        _Input = context.ReadValue<Vector2>();
-        _Movement = new Vector3(_Input.x, 0.0f, _Input.y);
+        //setting the WASD inputs
+        _WASDInput = context.ReadValue<Vector2>();
+        //updating player movement
+        _PlayerDirection = new Vector3(_WASDInput.x, 0.0f, _WASDInput.y);
     }
     public void Jump(InputAction.CallbackContext context) 
     {
+        //if player is not grounded or not hitting space
         if (!context.started) return;
         if (!_PlayerController.isGrounded) return;
-        _Velocity += JumpPower;
+        _GravityVelocity += JumpPower;
     }
 
     private void PlayerMovement() 
     {
-        _PlayerController.Move(_Movement * Time.deltaTime * Speed);
+        //updating player controller with updated player position
+        _PlayerController.Move(_PlayerDirection * Time.deltaTime * PLayerSpeed);
     }
     private void PlayerRotation() 
     {
-        if (_Input.sqrMagnitude == 0) return;
-
-        _Movement = Quaternion.Euler(0.0f, _MainCamera.transform.eulerAngles.y, 0.0f) * new Vector3(_Input.x, 0.0f, _Input.y);
-        var targetrotation = Quaternion.LookRotation(_Movement, Vector3.up);
+        //makes the player not snap facing back forward
+        if (_WASDInput.sqrMagnitude == 0) return;
+        //Player rotates with camera
+        _PlayerDirection = Quaternion.Euler(0.0f, _MainCamera.transform.eulerAngles.y, 0.0f) * new Vector3(_WASDInput.x, 0.0f, _WASDInput.y);
+        var targetrotation = Quaternion.LookRotation(_PlayerDirection, Vector3.up);
 
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetrotation, RotationSpeed * Time.deltaTime);
     }
     private void PlayerGravity()
     {
-        if (_PlayerController.isGrounded && _Velocity < 0.0f)
+        //checks velocity if player is grounded or velocity is less than 0
+        if (_PlayerController.isGrounded && _GravityVelocity < 0.0f)
         {
-            _Velocity = -1.0f;
+            //resets velocity
+            _GravityVelocity = -1.0f;
         }
+        //updates player po
         else
         {
-            _Velocity += _Gravity * GravityMultiplier * Time.deltaTime;
-            
+            //updates velocity with grvity and its multiplier
+            _GravityVelocity += _Gravity * GravityMultiplier * Time.deltaTime;
         }
-        _Movement.y = _Velocity;
+        //set player y axis
+        _PlayerDirection.y = _GravityVelocity;
     }
 
 

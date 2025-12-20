@@ -381,13 +381,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb6c1566be23bd84f8f91a7c783a63a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraManager
-  Target: {fileID: 1066855730}
+  Player: {fileID: 1066855730}
+  _DistanceToPlayer: 10
   MouseSens:
-    Horizontal: 20
-    Vertical: 20
+    Horizontal: 30
+    Vertical: 30
   CameraAngle:
-    max: 50
-    min: 10
+    max: 30
+    min: 5
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -690,7 +691,7 @@ GameObject:
   - component: {fileID: 850397936}
   - component: {fileID: 850397935}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -848,7 +849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2970bae6165603f4d81d68e3839b8705, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  Speed: 2
+  PLayerSpeed: 0
   RotationSpeed: 500
   GravityMultiplier: 1
   JumpPower: 5
