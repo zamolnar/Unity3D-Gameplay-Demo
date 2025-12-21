@@ -96,7 +96,7 @@ public class Player_Movemet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //gravity after rotation or else funky stuff happens when jumping
         PlayerRotation();
         PlayerGravity();
         PlayerMovement();
