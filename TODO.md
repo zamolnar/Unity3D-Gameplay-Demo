@@ -50,6 +50,8 @@ Notes / Questions
 ------------------------
 Decide CharacterController vs Rigidbody long-term
 
-How much camera collision is “enough” for prototype
+Movement system is intentionally simple; future projects will explore alternative approaches
+
+How much camera collision is "enough" for prototype
 
 Balance speed vs control for player movement
