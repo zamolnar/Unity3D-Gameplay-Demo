@@ -14,12 +14,16 @@ Initial refactor and code comments
 
 Basic scene setup
 
-
-Next (Short Term  Week 2)
------------------------------------
 Add simple test environment (walls, platforms)
 
 Add basic player state (grounded / airborne)
+
+
+
+Next (Short Term  Week 2)
+-----------------------------------
+
+implement win state when player reaches goal (clear feedback & allow level reset/restart)
 
 Improve movement feel (acceleration, air control)
 
